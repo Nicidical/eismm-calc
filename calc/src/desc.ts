@@ -275,7 +275,7 @@ export function getKOChance(
   if (move.timesUsed === undefined) move.timesUsed = 1;
   if (move.timesUsedWithMetronome === undefined) move.timesUsedWithMetronome = 1;
 
-  if (damage[0] >= defender.maxHP() && move.timesUsed === 1 && move.timesUsedWithMetronome === 1) {
+  if (damage[0] >= defender.maxHP()*1.5 && move.timesUsed === 1 && move.timesUsedWithMetronome === 1) {
     return {chance: 1, n: 1, text: 'OHKO'};
   }
 
@@ -720,6 +720,7 @@ function computeKOChance(
   maxHP: number,
   toxicCounter: number
 ) {
+  if (hp === maxHP) {hp = hp*1.5};
   let toxicDamage = 0;
   if (toxicCounter > 0) {
     toxicDamage = Math.floor((toxicCounter * maxHP) / 16);
