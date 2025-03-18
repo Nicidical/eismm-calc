@@ -275,7 +275,7 @@ export function getKOChance(
   if (move.timesUsed === undefined) move.timesUsed = 1;
   if (move.timesUsedWithMetronome === undefined) move.timesUsedWithMetronome = 1;
 
-  if (damage[0] >= defender.maxHP() && move.timesUsed === 1 && move.timesUsedWithMetronome === 1) {
+  if (damage[0] >= defender.maxHP()*1.5 && move.timesUsed === 1 && move.timesUsedWithMetronome === 1) {
     return {chance: 1, n: 1, text: 'OHKO'};
   }
 
@@ -535,12 +535,22 @@ function getEndOfTurn(
   let damage = 0;
   const texts = [];
 
+  const loseItem = move.named('Knock Off') && !defender.hasAbility('Sticky Hold');
+  // psychic noise should suppress all recovery effects
+  const healBlock = move.named('Psychic Noise') &&
+    !(
+      // suppression conditions
+      attacker.hasAbility('Sheer Force') ||
+      defender.hasItem('Covert Cloak') ||
+      defender.hasAbility('Shield Dust', 'Aroma Veil')
+    );
+
   if (field.hasWeather('Sun', 'Harsh Sunshine')) {
     if (defender.hasAbility('Dry Skin', 'Solar Power')) {
       damage -= Math.floor(defender.maxHP() / 8);
       texts.push(defender.ability + ' damage');
     }
-  } else if (field.hasWeather('Rain', 'Heavy Rain')) {
+  } else if (field.hasWeather('Rain', 'Heavy Rain') && !healBlock) {
     if (defender.hasAbility('Dry Skin')) {
       damage += Math.floor(defender.maxHP() / 8);
       texts.push('Dry Skin recovery');
@@ -558,7 +568,7 @@ function getEndOfTurn(
       texts.push('sandstorm damage');
     }
   } else if (field.hasWeather('Hail', 'Snow')) {
-    if (defender.hasAbility('Ice Body')) {
+    if (defender.hasAbility('Ice Body') && !healBlock) {
       damage += Math.floor(defender.maxHP() / 16);
       texts.push('Ice Body recovery');
     } else if (
@@ -572,15 +582,6 @@ function getEndOfTurn(
     }
   }
 
-  const loseItem = move.named('Knock Off') && !defender.hasAbility('Sticky Hold');
-  // psychic noise should suppress all recovery effects
-  const healBlock = move.named('Psychic Noise') &&
-    !(
-      // suppression conditions
-      attacker.hasAbility('Sheer Force') ||
-      defender.hasItem('Covert Cloak') ||
-      defender.hasAbility('Shield Dust', 'Aroma Veil')
-    );
   if (defender.hasItem('Leftovers') && !loseItem && !healBlock) {
     damage += Math.floor(defender.maxHP() / 16);
     texts.push('Leftovers recovery');
@@ -655,7 +656,7 @@ function getEndOfTurn(
     }
   } else if (
     (defender.hasStatus('slp') || defender.hasAbility('Comatose')) &&
-    attacker.hasAbility('isBadDreams') &&
+    attacker.hasAbility('Bad Dreams') &&
     !defender.hasAbility('Magic Guard')
   ) {
     damage -= Math.floor(defender.maxHP() / 8);
@@ -719,6 +720,7 @@ function computeKOChance(
   maxHP: number,
   toxicCounter: number
 ) {
+  if (hp === maxHP) {hp = hp*1.5};
   let toxicDamage = 0;
   if (toxicCounter > 0) {
     toxicDamage = Math.floor((toxicCounter * maxHP) / 16);

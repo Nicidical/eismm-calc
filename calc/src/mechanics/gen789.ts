@@ -438,7 +438,8 @@ export function calculateSMSSSV(
       (move.named('Dream Eater') &&
         (!(defender.hasStatus('slp') || defender.hasAbility('Comatose')))) ||
       (move.named('Steel Roller') && !field.terrain) ||
-      (move.named('Poltergeist') && (!defender.item || isQPActive(defender, field)))
+      (move.named('Poltergeist') &&
+        (!defender.item || (isQPActive(defender, field) && defender.hasItem('Booster Energy'))))
   ) {
     return result;
   }
@@ -676,13 +677,13 @@ export function calculateSMSSSV(
   desc.attackBoost =
     move.named('Foul Play') ? defender.boosts[attackStat] : attacker.boosts[attackStat];
 
-  if ((move.dropsStats && move.timesUsed! > 1) || move.hits > 1) {
+  if (move.timesUsed! > 1 || move.hits > 1) {
     // store boosts so intermediate boosts don't show.
     const origDefBoost = desc.defenseBoost;
     const origAtkBoost = desc.attackBoost;
 
     let numAttacks = 1;
-    if (move.dropsStats && move.timesUsed! > 1) {
+    if (move.timesUsed! > 1) {
       desc.moveTurns = `over ${move.timesUsed} turns`;
       numAttacks = move.timesUsed!;
     } else {
@@ -701,7 +702,7 @@ export function calculateSMSSSV(
       hasAteAbilityTypeChange = hasAteAbilityTypeChange &&
         attacker.hasAbility('Aerilate', 'Galvanize', 'Pixilate', 'Refrigerate', 'Normalize');
 
-      if ((move.dropsStats && move.timesUsed! > 1)) {
+      if (move.timesUsed! > 1) {
         // Adaptability does not change between hits of a multihit, only between turns
         preStellarStabMod = getStabMod(attacker, move, desc);
         // Hack to make Tera Shell with multihit moves, but not over multiple turns
@@ -847,7 +848,8 @@ export function calculateBasePowerSMSSSV(
     break;
   case 'Acrobatics':
     basePower = move.bp * (attacker.hasItem('Flying Gem') ||
-        (!attacker.item || isQPActive(attacker, field)) ? 2 : 1);
+        (!attacker.item ||
+          (isQPActive(attacker, field) && attacker.hasItem('Booster Energy'))) ? 2 : 1);
     desc.moveBP = basePower;
     break;
   case 'Assurance':
@@ -1004,7 +1006,8 @@ export function calculateBasePowerSMSSSV(
     desc,
     basePower,
     hasAteAbilityTypeChange,
-    turnOrder
+    turnOrder,
+    hit
   );
   basePower = OF16(Math.max(1, pokeRound((basePower * chainMods(bpMods, 41, 2097152)) / 4096)));
   if (
@@ -1028,7 +1031,8 @@ export function calculateBPModsSMSSSV(
   desc: RawDesc,
   basePower: number,
   hasAteAbilityTypeChange: boolean,
-  turnOrder: string
+  turnOrder: string,
+  hit: number
 ) {
   const bpMods = [];
 
@@ -1036,7 +1040,7 @@ export function calculateBPModsSMSSSV(
   const defenderItem = (defender.item && defender.item !== '')
     ? defender.item : defender.disabledItem;
   let resistedKnockOffDamage =
-    (!defenderItem || isQPActive(defender, field)) ||
+    (!defenderItem || (isQPActive(defender, field) && defenderItem === 'Booster Energy')) ||
     (defender.named('Dialga-Origin') && defenderItem === 'Adamant Crystal') ||
     (defender.named('Palkia-Origin') && defenderItem === 'Lustrous Globe') ||
     // Griseous Core for gen 9, Griseous Orb otherwise
@@ -1047,8 +1051,8 @@ export function calculateBPModsSMSSSV(
     (defender.named('Kyogre', 'Kyogre-Primal') && defenderItem === 'Blue Orb') ||
     (defender.name.includes('Silvally') && defenderItem.includes('Memory')) ||
     defenderItem.includes(' Z') ||
-    (defender.named('Zacian') && defenderItem === 'Rusted Sword') ||
-    (defender.named('Zamazenta') && defenderItem === 'Rusted Shield') ||
+    (defender.name.includes('Zacian') && defenderItem === 'Rusted Sword') ||
+    (defender.name.includes('Zamazenta') && defenderItem === 'Rusted Shield') ||
     (defender.name.includes('Ogerpon-Cornerstone') && defenderItem === 'Cornerstone Mask') ||
     (defender.name.includes('Ogerpon-Hearthflame') && defenderItem === 'Hearthflame Mask') ||
     (defender.name.includes('Ogerpon-Wellspring') && defenderItem === 'Wellspring Mask') ||
@@ -1059,6 +1063,11 @@ export function calculateBPModsSMSSSV(
   if (!resistedKnockOffDamage && defenderItem) {
     const item = gen.items.get(toID(defenderItem))!;
     resistedKnockOffDamage = !!item.megaEvolves && defender.name.includes(item.megaEvolves);
+  }
+
+  // Resist knock off damage if your item was already knocked off
+  if (!resistedKnockOffDamage && hit > 1 && !defender.hasAbility('Sticky Hold')) {
+    resistedKnockOffDamage = true;
   }
 
   if ((move.named('Facade') && attacker.hasStatus('brn', 'par', 'psn', 'tox')) ||

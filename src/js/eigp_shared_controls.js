@@ -280,7 +280,7 @@ $(".ability").bind("keyup change", function () {
 	}
 	var boostedStat = $(this).closest(".poke-info").find(".boostedStat");
 
-	if (ability === "Protosynthesis" || ability === "Quark Drive") {
+	if (ability === "Protosynthesis" || ability === "Aquaform" || ability === "Lithoforge" || ability === "Cryogenesis" || ability === "Quark Drive" || ability === "Verdaboost" || ability === "Psionization" || ability === "Magirise") {
 		boostedStat.show();
 		autosetQP($(this).closest(".poke-info"));
 	} else {
@@ -309,7 +309,14 @@ function autosetQP(pokemon) {
 		if (
 			(item === "Booster Energy") ||
 			(ability === "Protosynthesis" && currentWeather === "Sun") ||
-			(ability === "Quark Drive" && currentTerrain === "Electric")
+			(ability === "Aquaform" && currentWeather === "Rain") ||
+			(ability === "Lithoforge" && currentWeather === "Sand") ||
+			(ability === "Cryogenesis" && currentWeather === "Snow") ||
+			(ability === "Cryogenesis" && currentWeather === "Hail") ||
+			(ability === "Quark Drive" && currentTerrain === "Electric") ||
+			(ability === "Verdaboost" && currentTerrain === "Grassy") ||
+			(ability === "Psionization" && currentTerrain === "Psychic") ||
+			(ability === "Magirise" && currentTerrain === "Misty")
 		) {
 			pokemon.find(".boostedStat").val("auto");
 		} else {
