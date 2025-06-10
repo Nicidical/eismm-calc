@@ -360,7 +360,7 @@ th {
 }
 .poke-info input[type="number"] {
     display: inline-block;
-    width: 3em;
+    width: 3.5em;
 }
 .info-group {
     margin: 1em 0;
@@ -375,7 +375,7 @@ select.toxic-counter {
     width: 5.5em;
 }
 .move-selector, .move-bp, .move-type, .move-cat, .move-hits {
-    font-size: 0.9em;
+    font-size: 1em;
 }
 .move-selector {
     width: 11.5em;
