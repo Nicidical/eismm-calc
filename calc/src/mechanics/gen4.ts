@@ -298,6 +298,7 @@ export function calculateDPP(
       numAttacks = move.hits;
     }
     let usedItems = [false, false];
+    const damageMatrix = [damage];
     for (let times = 1; times < numAttacks; times++) {
       usedItems = checkMultihitBoost(gen, attacker, defender, move,
         field, desc, usedItems[0], usedItems[1]);
@@ -315,8 +316,8 @@ export function calculateDPP(
       }
       baseDamage = calculateFinalModsDPP(baseDamage, attacker, move, field, desc, isCritical);
 
-      let damageMultiplier = 0;
-      result.damage = result.damage.map(affectedAmount => {
+      const damageArray = [];
+      for (let i = 0; i < 16; i++) {
         let newFinalDamage = 0;
         newFinalDamage = Math.floor((baseDamage * 92) / 100);
         newFinalDamage = Math.floor(newFinalDamage * stabMod);
@@ -329,10 +330,11 @@ export function calculateDPP(
     		newFinalDamage = Math.floor(newFinalDamage * dwcMod);
         }
         newFinalDamage = Math.max(1, newFinalDamage);
-        damageMultiplier++;
-        return affectedAmount + newFinalDamage;
-      });
+        damageArray[i] = newFinalDamage;
+      }
+      damageMatrix[times] = damageArray;
     }
+    result.damage = damageMatrix;
     desc.defenseBoost = origDefBoost;
     desc.attackBoost = origAtkBoost;
   }
@@ -446,6 +448,11 @@ export function calculateBPModsDPP(
     desc.isHelpingHand = true;
   }
 
+  if (attacker.hasAbility('Technician') && basePower <= 60) {
+    basePower = Math.floor(basePower * 1.5);
+    desc.attackerAbility = attacker.ability;
+  }
+
   const isPhysical = move.category === 'Physical';
   if ((attacker.hasItem('Muscle Band') && isPhysical) ||
       (attacker.hasItem('Wise Glasses') && !isPhysical)) {
@@ -474,8 +481,7 @@ export function calculateBPModsDPP(
     ((attacker.hasAbility('Overgrow') && move.hasType('Grass')) ||
       (attacker.hasAbility('Blaze') && move.hasType('Fire')) ||
       (attacker.hasAbility('Torrent') && move.hasType('Water')) ||
-      (attacker.hasAbility('Swarm') && move.hasType('Bug')))) ||
-      (attacker.hasAbility('Technician') && basePower <= 60)
+      (attacker.hasAbility('Swarm') && move.hasType('Bug'))))
   ) {
     basePower = Math.floor(basePower * 1.5);
     desc.attackerAbility = attacker.ability;
