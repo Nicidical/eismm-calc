@@ -404,6 +404,12 @@ export function calculateBasePowerDPP(
     basePower = Math.min(200, 60 + 20 * countBoosts(gen, defender.boosts));
     desc.moveBP = basePower;
     break;
+  case 'Pursuit':
+    const switching = field.defenderSide.isSwitching === 'out';
+    basePower = move.bp * (switching ? 2 : 1);
+    if (switching) desc.isSwitching = 'out';
+    desc.moveBP = basePower;
+    break;
   case 'Wake-Up Slap':
     if (defender.hasStatus('slp')) {
       basePower *= 2;
@@ -495,6 +501,18 @@ export function calculateBPModsDPP(
     basePower = Math.floor(basePower * 1.25);
     desc.defenderAbility = defender.ability;
   }
+
+  if (attacker.hasAbility('Rivalry') && ![attacker.gender, defender.gender].includes('N')) {
+    if (attacker.gender === defender.gender) {
+      basePower = Math.floor(basePower * 1.25);
+      desc.rivalry = 'buffed';
+    } else {
+      basePower = Math.floor(basePower * 0.75);
+      desc.rivalry = 'nerfed';
+    }
+    desc.attackerAbility = attacker.ability;
+  }
+
   return basePower;
 }
 
@@ -699,15 +717,6 @@ function calculateFinalModsDPP(
     desc.attackerItem = attacker.item;
   }
 
-  if (move.named('Pursuit') && field.defenderSide.isSwitching === 'out') {
-    // technician negates switching boost, thanks DaWoblefet
-    if (attacker.hasAbility('Technician')) {
-      baseDamage = Math.floor(baseDamage * 1);
-    } else {
-      baseDamage = Math.floor(baseDamage * 2);
-      desc.isSwitching = 'out';
-    }
-  }
   return baseDamage;
 }
 
