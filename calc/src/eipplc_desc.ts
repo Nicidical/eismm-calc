@@ -285,7 +285,7 @@ export function getKOChance(
   if (move.timesUsed === undefined) move.timesUsed = 1;
   if (move.timesUsedWithMetronome === undefined) move.timesUsedWithMetronome = 1;
 
-  if (damage[0] >= defender.maxHP()*1.5 && move.timesUsed === 1 && move.timesUsedWithMetronome === 1) {
+  if (damage[0] >= defender.maxHP()*2 && move.timesUsed === 1 && move.timesUsedWithMetronome === 1) {
     return {chance: 1, n: 1, text: 'OHKO'};
   }
 
@@ -394,12 +394,12 @@ export function getKOChance(
     for (let i = 5; i <= 9; i++) {
       if (
         predictTotal(damage[0], eot.damage, i, 1, toxicCounter, defender.maxHP()) >=
-        defender.curHP()*1.5 - hazards.damage
+        defender.curHP()*2 - hazards.damage
       ) {
         return KOChance(0, 1, i);
       } else if (
         predictTotal(damage[damage.length - 1], eot.damage, i, 1, toxicCounter, defender.maxHP()) >=
-        defender.curHP()*1.5 - hazards.damage
+        defender.curHP()*2 - hazards.damage
       ) {
         // possible but no concrete chance
         return KOChance(undefined, undefined, i);
@@ -424,7 +424,7 @@ export function getKOChance(
       toxicCounter,
       defender.maxHP()
     ) >=
-      (defender.curHP() === defender.maxHP() ? defender.curHP()*1.5 : defender.curHP()) - hazards.damage
+      (defender.curHP() === defender.maxHP() ? defender.curHP()*2 : defender.curHP()) - hazards.damage
     ) {
       return KOChance(0, 1, move.timesUsed, true);
     } else if (
@@ -436,7 +436,7 @@ export function getKOChance(
         toxicCounter,
         defender.maxHP()
       ) >=
-      (defender.curHP() === defender.maxHP() ? defender.curHP()*1.5 : defender.curHP()) - hazards.damage
+      (defender.curHP() === defender.maxHP() ? defender.curHP()*2 : defender.curHP()) - hazards.damage
     ) {
       // possible but no real idea
       return KOChance(undefined, undefined, move.timesUsed, true);
@@ -757,7 +757,7 @@ function computeKOChance(
   maxHP: number,
   toxicCounter: number
 ) {
-  if (hp === maxHP) {hp = hp*1.5};
+  if (hp === maxHP) {hp = hp*2};
   let toxicDamage = 0;
   if (toxicCounter > 0) {
     toxicDamage = Math.floor((toxicCounter * maxHP) / 16);

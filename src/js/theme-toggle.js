@@ -15,10 +15,10 @@
 */
 var prefersDarkTheme = localStorage.getItem('darkTheme') || '';
 var darkThemeButton = document.getElementById('dark-theme-toggle');
-var prefersClassicTheme = localStorage.getItem('classicTheme') || '';
+var prefersClassicTheme = localStorage.getItem('classicTheme');
 var classicThemeButton = document.getElementById('classic-theme-toggle');
 darkThemeButton.value = prefersDarkTheme;
-classicThemeButton.value = prefersClassicTheme;
+classicThemeButton.value = (!localStorage.getItem('classicTheme') ? prefersClassicTheme : 'false');
 updateTheme();
 
 function updateTheme() {
