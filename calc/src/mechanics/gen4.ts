@@ -605,7 +605,7 @@ export function calculateDefenseDPP(
   const rawDefense = defender.rawStats[defenseStat];
 //  if (defenseBoost === 0 || (isCritical && defenseBoost > 0)) {
 //    defense = rawDefense;
-//  } else [to reset crit boost, return the below if to this elseif position]
+//  } else [to reset crit defense break, un-comment this section and make the below line elseif this one]
     if (attacker.hasAbility('Unaware')) {
     defense = rawDefense;
     desc.attackerAbility = attacker.ability;

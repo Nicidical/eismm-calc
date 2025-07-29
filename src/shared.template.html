@@ -20,6 +20,9 @@
         if ((localStorage.getItem('darkTheme') || '' + window.matchMedia('(prefers-color-scheme: dark)').matches) === 'false') {
             document.getElementById('dark-theme-styles').disabled = true;
         }
+        if (!localStorage.getItem('classicTheme')) {
+            localStorage.setItem('classicTheme', false;
+        }
     </script>
 </head>
 

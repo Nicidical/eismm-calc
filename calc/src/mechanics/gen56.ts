@@ -939,7 +939,7 @@ export function calculateDefenseBWXY(
   ];
   desc.defenseEVs = getStatDescriptionText(gen, defender, defenseStat, defender.nature);
   if (boosts === 0 ||
-    (isCritical && boosts > 0) ||
+//    (isCritical && boosts > 0) || [to reset crit defense break, un-comment this line]
     move.ignoreDefensive) {
     defense = defender.rawStats[defenseStat];
   } else if (attacker.hasAbility('Unaware')) {

@@ -18,7 +18,7 @@ var darkThemeButton = document.getElementById('dark-theme-toggle');
 var prefersClassicTheme = localStorage.getItem('classicTheme');
 var classicThemeButton = document.getElementById('classic-theme-toggle');
 darkThemeButton.value = prefersDarkTheme;
-classicThemeButton.value = (!localStorage.getItem('classicTheme') ? prefersClassicTheme : 'false');
+classicThemeButton.value = prefersClassicTheme;
 updateTheme();
 
 function updateTheme() {
