@@ -331,6 +331,7 @@ export function calculateSMSSSV(
   let isPixilate = false;
   let isRefrigerate = false;
   let isGalvanize = false;
+  let isTransmutate = false;
   let isLiquidVoice = false;
   let isNormalize = false;
   const noTypeChange = move.named(
@@ -357,10 +358,12 @@ export function calculateSMSSSV(
       type = 'Fairy';
     } else if ((isRefrigerate = attacker.hasAbility('Refrigerate') && normal)) {
       type = 'Ice';
+    } else if ((isTransmutate = attacker.hasAbility('Transmutate') && normal)) {
+      type = 'Psychic';
     } else if ((isNormalize = attacker.hasAbility('Normalize'))) { // Boosts any type
       type = 'Normal';
     }
-    if (isGalvanize || isPixilate || isRefrigerate || isAerilate || isNormalize) {
+    if (isGalvanize || isPixilate || isRefrigerate || isAerilate || isNormalize || isTransmutate) {
       desc.attackerAbility = attacker.ability;
       hasAteAbilityTypeChange = true;
     } else if (isLiquidVoice) {
@@ -703,7 +706,7 @@ export function calculateSMSSSV(
       // Check if lost -ate ability. Typing stays the same, only boost is lost
       // Cannot be regained during multihit move and no Normal moves with stat drawbacks
       hasAteAbilityTypeChange = hasAteAbilityTypeChange &&
-        attacker.hasAbility('Aerilate', 'Galvanize', 'Pixilate', 'Refrigerate', 'Normalize');
+        attacker.hasAbility('Aerilate', 'Galvanize', 'Pixilate', 'Refrigerate', 'Transmutate', 'Normalize');
 
       if (move.timesUsed! > 1) {
         // Adaptability does not change between hits of a multihit, only between turns
