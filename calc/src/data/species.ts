@@ -3871,7 +3871,7 @@ const BW_PATCH: {[name: string]: DeepPartial<SpeciesData>} = {
   Beartic: {
     types: ['Ice'],
     bs: {hp: 95, at: 110, df: 80, sa: 70, sd: 80, sp: 50},
-    weightkg: 100,
+    weightkg: 260,
     abilities: {0: 'Snow Cloak'},
   },
   Beheeyem: {
@@ -4218,7 +4218,7 @@ const BW_PATCH: {[name: string]: DeepPartial<SpeciesData>} = {
   Gigalith: {
     types: ['Rock'],
     bs: {hp: 85, at: 135, df: 130, sa: 60, sd: 70, sp: 25},
-    weightkg: 100,
+    weightkg: 260,
     abilities: {0: 'Sturdy'},
   },
   Golett: {
@@ -4797,7 +4797,7 @@ const BW_PATCH: {[name: string]: DeepPartial<SpeciesData>} = {
   Terrakion: {
     types: ['Rock', 'Fighting'],
     bs: {hp: 91, at: 129, df: 90, sa: 72, sd: 90, sp: 108},
-    weightkg: 100,
+    weightkg: 260,
     abilities: {0: 'Justified'},
     gender: 'N',
   },
