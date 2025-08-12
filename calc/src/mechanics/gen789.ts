@@ -1626,7 +1626,8 @@ export function calculateDfModsSMSSSV(
     desc.defenderItem = defender.item;
   } else if (
     (defender.hasItem('Metal Powder') && defender.named('Ditto') && hitsPhysical) ||
-    (defender.hasItem('Deep Sea Scale') && defender.named('Clamperl') && !hitsPhysical)
+    (defender.hasItem('Deep Sea Scale') && defender.named('Clamperl') && !hitsPhysical) ||
+    (defender.hasItem('Sturdy Shell') && defender.named('Koopa Troopa', 'Paratroopa', 'Dry Bones') && hitsPhysical)
   ) {
     dfMods.push(8192);
     desc.defenderItem = defender.item;
